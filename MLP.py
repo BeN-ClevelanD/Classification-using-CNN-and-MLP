@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import torch.nn as nn  # Layers
 import torch.nn.functional as F # Activation Functions
 import torch.optim as optim # Optimizers
-
+import torch.optim.lr_scheduler as lr_scheduler
 
 import torch  # Main Package
 import torchvision  # Package for Vision Related ML
@@ -157,7 +157,7 @@ MOMENTUM = 0.9
 criterion = nn.NLLLoss()
 #optimizer = optim.SGD(mlp.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM, weight_decay=L2_lamda)
 optimizer = optim.SGD(mlp.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM)
-
+scheduler = lr_scheduler.StepLR(optimizer, step_size = 6, gamma=0.1)
 
 
 # Train the MLP for 5 epochs
@@ -166,7 +166,7 @@ for epoch in range(15):
     train_loss = train(mlp, train_loader, criterion, optimizer, device)
     test_acc = test(mlp, test_loader, device)
     print(f"Epoch {epoch+1}: Train loss = {train_loss:.4f}, Test accuracy = {test_acc:.4f}")
-  
+    scheduler.step()
 
 
 # Test on a batch of data
