@@ -15,7 +15,7 @@ import torch.optim as optim # Optimizers
 transform = transforms.Compose([
     transforms.ToTensor(),  # Convert to Tensor
     # Normalize Image to [-1, 1] first number is mean, second is std deviation
-   # transforms.Normalize((0.5,), (0.5,)) 
+    transforms.Normalize((0.5,), (0.5,)) 
 ])
 
 # Load MNIST dataset

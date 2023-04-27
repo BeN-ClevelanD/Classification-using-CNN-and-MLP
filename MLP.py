@@ -19,7 +19,7 @@ transform = transforms.Compose([
     transforms.ToTensor(),  # Convert to Tensor
     # Normalize Image to [-1, 1] first number is mean, second is std deviation
     #transforms.Normalize((0.4914, 0.4822, 0.4465), (0,247, 0.243, 0.261)) 
-    #transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], std=[0.247, 0.243, 0.261])
+    transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], std=[0.247, 0.243, 0.261])
 ])
 
 # Load MNIST dataset
