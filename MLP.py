@@ -14,8 +14,8 @@ import torchvision  # Package for Vision Related ML
 
 # Create the transform sequence
 transform = transforms.Compose([
-    #transforms.RandomHorizontalFlip(p=0.5),
-   # transforms.RandomCrop(size=(32,32), padding=0),
+    transforms.RandomHorizontalFlip(p=0.5),
+    transforms.RandomCrop(size=(32,32), padding=0),
     transforms.ToTensor(),  # Convert to Tensor
     # Normalize Image to [-1, 1] first number is mean, second is std deviation
     #transforms.Normalize((0.4914, 0.4822, 0.4465), (0,247, 0.243, 0.261)) 

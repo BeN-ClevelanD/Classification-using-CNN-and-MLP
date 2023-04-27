@@ -6,6 +6,7 @@ import torch.nn as nn  # Layers
 import torch.nn.functional as F # Activation Functions
 
 import torch.optim as optim # Optimizers
+import torchvision.transforms as transforms
 
 
 
@@ -13,6 +14,8 @@ import torch.optim as optim # Optimizers
 
 # Create the transform sequence
 transform = transforms.Compose([
+    transforms.RandomHorizontalFlip(p=0.5),
+    transforms.RandomCrop(size=(32,32), padding=0),
     transforms.ToTensor(),  # Convert to Tensor
     # Normalize Image to [-1, 1] first number is mean, second is std deviation
     transforms.Normalize((0.5,), (0.5,)) 
