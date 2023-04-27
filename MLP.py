@@ -68,6 +68,7 @@ class MLP(nn.Module):
         self.fc5= nn.Linear(1024, 10)
         self.output = nn.LogSoftmax(dim=1)
         self.dropout = nn.Dropout(0.15)
+        #batchnorm
        
 
     def forward(self, x):
