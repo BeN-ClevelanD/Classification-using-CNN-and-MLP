@@ -90,11 +90,11 @@ class CNN(nn.Module):
         self.conv2 = nn.Conv2d(6, 16, 5)
         self.pool = nn.MaxPool2d(2, 2)
         self.fc1 = nn.Linear(16 * 5 * 5, 120)
-      
+        self.bn1 = nn.BatchNorm1d(120)
         self.fc2 = nn.Linear(120, 84)
-     
+        self.bn2 = nn.BatchNorm1d(84)
         self.fc3 = nn.Linear(84, 10)
-        self.dropout = nn.Dropout(0.15)
+        self.drop = nn.Dropout(0.25)
      
 
     def forward(self, x):
