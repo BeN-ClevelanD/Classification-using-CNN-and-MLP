@@ -70,6 +70,7 @@ class MLP(nn.Module):
 
         self.fc4= nn.Linear(2023, 10)
         self.output = nn.LogSoftmax(dim=1)
+        self.dropout = nn.Dropout(0.15)
        
 
     def forward(self, x):
@@ -77,9 +78,12 @@ class MLP(nn.Module):
       x = self.flatten(x) # Batch now has shape (B, C*W*H)
       # x = self.dropout(x)
       x = F.relu(self.fc1(x))  # First Hidden Layer
+      x = self.dropout(x)
       x = F.relu(self.bn2(self.fc2(x)))  # Second Hidden Layer
+      x = self.dropout(x)
    
       x = F.relu(self.bn3(self.fc3(x)))
+      x = self.dropout(x)
    
     
  
