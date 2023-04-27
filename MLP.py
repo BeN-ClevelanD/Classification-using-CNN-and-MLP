@@ -52,23 +52,20 @@ class MLP(nn.Module):
     def __init__(self):
         super(MLP, self).__init__()
         self.flatten = nn.Flatten() # For flattening the 2D image
-        #self.fc1 = nn.Linear(32*32*3, 1024)  # Input is image with shape (28x28)
-        #self.fc2 = nn.Linear(1024, 2048)  # First HL
-        #self.fc3 = nn.Linear(2048, 1024)
-        #self.fc4= nn.Linear(1024, 10) # Second HL
-        self.fc1 = nn.Linear(32*32*3, 2023)  # Input is image with shape (28x28)
-      
+       
+        self.fc1 = nn.Linear(32*32*3, 2040)  # Input is image with shape (28x28)
+        self.bn1 = nn.BatchNorm1d(2040)
 
-        self.fc2 = nn.Linear(2023, 2023)  # First HL
-      
+        self.fc2 = nn.Linear(2040, 1024)  # First HL
+        self.bn2 = nn.BatchNorm1d(1024)
 
-        self.fc3 = nn.Linear(2023, 2023)
-      
+        self.fc3 = nn.Linear(1024, 1024)
+        self.bn3 = nn.BatchNorm1d(1024)
 
-        #self.fc4 = nn.Linear(1024, 1024)  # First HL
-        #self.bn4 = nn.BatchNorm1d(1024)
+        self.fc4 = nn.Linear(1024, 1024)  # First HL
+        self.bn4 = nn.BatchNorm1d(1024)
 
-        self.fc4= nn.Linear(2023, 10)
+        self.fc5= nn.Linear(1024, 10)
         self.output = nn.LogSoftmax(dim=1)
         self.dropout = nn.Dropout(0.15)
        
