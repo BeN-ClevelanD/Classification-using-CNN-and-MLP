@@ -14,8 +14,7 @@ import torchvision  # Package for Vision Related ML
 
 # Create the transform sequence
 transform = transforms.Compose([
-    transforms.RandomHorizontalFlip(p=0.5),
-    transforms.RandomCrop(size=(32,32), padding=0),
+   
     transforms.ToTensor(),  # Convert to Tensor
     # Normalize Image to [-1, 1] first number is mean, second is std deviation
     #transforms.Normalize((0.4914, 0.4822, 0.4465), (0,247, 0.243, 0.261)) 
@@ -31,7 +30,7 @@ testset = torchvision.datasets.CIFAR10(root='./data', train=False,
                                       download=True, transform=transform)
 
 # Send data to the data loaders
-BATCH_SIZE = 128
+BATCH_SIZE = 64
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
                                           shuffle=True)
 
@@ -57,19 +56,19 @@ class MLP(nn.Module):
         #self.fc2 = nn.Linear(1024, 2048)  # First HL
         #self.fc3 = nn.Linear(2048, 1024)
         #self.fc4= nn.Linear(1024, 10) # Second HL
-        self.fc1 = nn.Linear(32*32*3, 1024)  # Input is image with shape (28x28)
+        self.fc1 = nn.Linear(32*32*3, 2023)  # Input is image with shape (28x28)
       
 
-        self.fc2 = nn.Linear(1024, 1024)  # First HL
+        self.fc2 = nn.Linear(2023, 2023)  # First HL
       
 
-        self.fc3 = nn.Linear(1024, 1024)
+        self.fc3 = nn.Linear(2023, 2023)
       
 
         #self.fc4 = nn.Linear(1024, 1024)  # First HL
         #self.bn4 = nn.BatchNorm1d(1024)
 
-        self.fc4= nn.Linear(1024, 10)
+        self.fc4= nn.Linear(2023, 10)
         self.output = nn.LogSoftmax(dim=1)
        
 
