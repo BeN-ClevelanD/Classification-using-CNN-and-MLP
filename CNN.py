@@ -7,7 +7,7 @@ import torch.nn.functional as F # Activation Functions
 
 import torch.optim as optim # Optimizers
 import torchvision.transforms as transforms
-
+import torch.optim.lr_scheduler as lr_scheduler
 
 
 #ADD DATA AUG, ADD DROPOUT< 
@@ -121,12 +121,13 @@ MOMENTUM = 0.9
 # Define the loss function, optimizer, and learning rate scheduler
 criterion = nn.CrossEntropyLoss() # Use this if not using softmax layer
 optimizer = optim.SGD(cnn.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM)
-
+scheduler = lr_scheduler.StepLR(optimizer, step_size = 6, gamma=0.1)
 # Train the MLP for 5 epochs
 for epoch in range(15):
     train_loss = train(cnn, train_loader, criterion, optimizer, device)
     test_acc = test(cnn, test_loader, device)
     print(f"Epoch {epoch+1}: Train loss = {train_loss:.4f}, Test accuracy = {test_acc:.4f}")
+    scheduler.step()
     
 
 
