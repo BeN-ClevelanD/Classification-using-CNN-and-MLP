@@ -1,20 +1,21 @@
-import torch  # Main Package
-import torchvision  # Package for Vision Related ML
+import torch  
+import torchvision  
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
-import torch.nn as nn  # Layers
-import torch.nn.functional as F # Activation Functions
-import torch.optim as optim # Optimizers
+import torch.nn as nn 
+import torch.nn.functional as F 
+import torch.optim as optim 
 import torch.optim.lr_scheduler as lr_scheduler
 
-import torch  # Main Package
-import torchvision  # Package for Vision Related ML
- # Subpackage that contains image transforms
+import torch  
+import torchvision  
+import torchvision.transforms as transforms 
 
-
+torch.manual_seed(33)
 # Create the transform sequence
 transform = transforms.Compose([
-   
+    #transforms.RandomHorizontalFlip(p=0.5),
+   # transforms.RandomCrop(size=(32,32), padding=0),
     transforms.ToTensor(),  # Convert to Tensor
     # Normalize Image to [-1, 1] first number is mean, second is std deviation
     #transforms.Normalize((0.4914, 0.4822, 0.4465), (0,247, 0.243, 0.261)) 
@@ -30,7 +31,7 @@ testset = torchvision.datasets.CIFAR10(root='./data', train=False,
                                       download=True, transform=transform)
 
 # Send data to the data loaders
-BATCH_SIZE = 64
+BATCH_SIZE = 128
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
                                           shuffle=True)
 
@@ -68,24 +69,20 @@ class MLP(nn.Module):
         self.fc5= nn.Linear(1024, 10)
         self.output = nn.LogSoftmax(dim=1)
         self.dropout = nn.Dropout(0.15)
-        #batchnorm
-       
 
     def forward(self, x):
       # Batch x of shape (B, C, W, H)
       x = self.flatten(x) # Batch now has shape (B, C*W*H)
       # x = self.dropout(x)
-      x = F.relu(self.fc1(x))  # First Hidden Layer
+      x = F.relu(self.bn1(self.fc1(x)))  # First Hidden Layer
       x = self.dropout(x)
       x = F.relu(self.bn2(self.fc2(x)))  # Second Hidden Layer
       x = self.dropout(x)
-   
       x = F.relu(self.bn3(self.fc3(x)))
       x = self.dropout(x)
-   
-    
- 
-      x = self.fc4(x)  # Output Layer
+      x = F.relu(self.bn4(self.fc4(x)))
+      x = self.dropout(x)
+      x = self.fc5(x)  # Output Layer
       x = self.output(x)  # For multi-class classification
       return x  # Has shape (B, 10)
     
@@ -112,7 +109,7 @@ with torch.no_grad():  # Don't accumlate gradients
 
 
 
-
+L2_lamda = 0.0001
 # Define the training and testing functions
 def train(net, train_loader, criterion, optimizer, device):
     net.train()  # Set model to training mode.
@@ -150,15 +147,15 @@ def test(net, test_loader, device):
 
 mlp = MLP().to(device)
 
-LEARNING_RATE = 0.1
+LEARNING_RATE = 0.01
 MOMENTUM = 0.9
 
 # Define the loss function, optimizer, and learning rate scheduler
 criterion = nn.NLLLoss()
 #optimizer = optim.SGD(mlp.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM, weight_decay=L2_lamda)
 optimizer = optim.SGD(mlp.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM)
-scheduler = lr_scheduler.StepLR(optimizer, step_size = 6, gamma=0.1)
 
+scheduler = lr_scheduler.StepLR(optimizer, step_size = 6, gamma=0.1)
 
 # Train the MLP for 5 epochs
 for epoch in range(15):

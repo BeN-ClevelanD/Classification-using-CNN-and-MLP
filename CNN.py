@@ -6,15 +6,13 @@ import torch.nn as nn  # Layers
 import torch.nn.functional as F # Activation Functions
 
 import torch.optim as optim # Optimizers
-import torchvision.transforms as transforms
 import torch.optim.lr_scheduler as lr_scheduler
 
 
 #ADD DATA AUG, ADD DROPOUT< 
-
+torch.manual_seed(33)
 # Create the transform sequence
 transform = transforms.Compose([
-    
     transforms.ToTensor(),  # Convert to Tensor
     # Normalize Image to [-1, 1] first number is mean, second is std deviation
     transforms.Normalize((0.5,), (0.5,)) 
@@ -29,7 +27,7 @@ testset = torchvision.datasets.CIFAR10(root='./data', train=False,
                                       download=True, transform=transform)
 
 # Send data to the data loaders
-BATCH_SIZE = 64
+BATCH_SIZE = 128
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
                                           shuffle=True)
 
@@ -95,18 +93,15 @@ class CNN(nn.Module):
         self.bn2 = nn.BatchNorm1d(84)
         self.fc3 = nn.Linear(84, 10)
         self.drop = nn.Dropout(0.25)
-     
 
     def forward(self, x):
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
         x = torch.flatten(x, 1) # flatten all dimensions except batch
-      
-        x = F.relu(self.fc1(x))
-        x = self.dropout(x)
-      
-        x = F.relu(self.fc2(x))
-        x = self.dropout(x)
+        x = self.drop(x)
+        x = F.relu(self.bn1(self.fc1(x)))
+        x = self.drop(x)
+        x = F.relu(self.bn2(self.fc2(x)))
         x = self.fc3(x)
         return x
     
@@ -115,20 +110,19 @@ class CNN(nn.Module):
 
 cnn = CNN().to(device)
 
-LEARNING_RATE = 0.1
+LEARNING_RATE = 1e-1
 MOMENTUM = 0.9
 
 # Define the loss function, optimizer, and learning rate scheduler
 criterion = nn.CrossEntropyLoss() # Use this if not using softmax layer
 optimizer = optim.SGD(cnn.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM)
-scheduler = lr_scheduler.StepLR(optimizer, step_size = 6, gamma=0.1)
+scheduler = lr_scheduler.StepLR(optimizer, step_size = 7, gamma=0.1)
 # Train the MLP for 5 epochs
 for epoch in range(15):
     train_loss = train(cnn, train_loader, criterion, optimizer, device)
     test_acc = test(cnn, test_loader, device)
     print(f"Epoch {epoch+1}: Train loss = {train_loss:.4f}, Test accuracy = {test_acc:.4f}")
     scheduler.step()
-    
 
 
 
